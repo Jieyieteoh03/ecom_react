@@ -88,7 +88,7 @@ function Products() {
         {products
           ? products.map((product) => {
               return (
-                <Grid.Col key={product._id} span={4}>
+                <Grid.Col key={product._id} lg={4} sm={6} xs={12}>
                   <Card withBorder shadow="sm" p="20px">
                     <Title order={5}>{product.title}</Title>
                     <Space h="20px" />
