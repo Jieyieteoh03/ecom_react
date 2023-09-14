@@ -1,5 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCartItems, removeItemFromCart } from "../api/cart";
+import {
+  getCartItems,
+  removeItemFromCart,
+  removeItemsFromCart,
+} from "../api/cart";
 import {
   Table,
   Container,
@@ -11,11 +15,10 @@ import {
   Group,
 } from "@mantine/core";
 import Header from "../Header";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { notifications } from "@mantine/notifications";
 
 export default function Cart() {
-  //let checkedList = []
   const [checkedList, setCheckedList] = useState([]);
   const queryClient = useQueryClient();
   const [checkAll, setCheckAll] = useState(false);
@@ -23,6 +26,18 @@ export default function Cart() {
     queryKey: ["cart"],
     queryFn: getCartItems,
   });
+
+  // const calculateTotal = () => {
+  //   let total = 0;
+  //   cart.map((item) => (total = total + item.quantity * item.price));
+  //   return total;
+  // };
+
+  const cartTotal = useMemo(() => {
+    let total = 0;
+    cart.map((item) => (total = total + item.quantity * item.price));
+    return total;
+  }, [cart]);
 
   const ths = (
     <tr>
@@ -105,6 +120,9 @@ export default function Cart() {
     } else {
       const newCheckedList = checkedList.filter((cart) => cart !== id);
       setCheckedList(newCheckedList);
+      if (newCheckedList.length === 0) {
+        setCheckAll(false);
+      }
     }
   };
 
@@ -121,16 +139,33 @@ export default function Cart() {
     },
   });
 
+  // const deleteCheckedItems = () => {
+  //   const newCart = cart.filter((item) => !checkedList.includes(item._id));
+
+  //   queryClient.setQueryData(["cart"], newCart);
+
+  //   setCheckedList([]);
+  //   localStorage.setItem("cart", JSON.stringify(newCart));
+
+  //   setCheckAll(false);
+  //   setCheckedList([]);
+  // };
+
+  const deleteProductsMutation = useMutation({
+    mutationFn: removeItemsFromCart,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
+      notifications.show({
+        title: "Cart deleted",
+        color: "red",
+      });
+    },
+  });
+
   const deleteCheckedItems = () => {
-    const newCart = cart.filter((item) => !checkedList.includes(item._id));
-
-    queryClient.setQueryData(["cart"], newCart);
-
-    setCheckedList([]);
-    localStorage.setItem("cart", JSON.stringify(newCart));
-
-    setCheckAll(false);
-    setCheckedList([]);
+    deleteProductsMutation.mutate(checkedList);
   };
 
   return (
@@ -143,7 +178,16 @@ export default function Cart() {
         <Space h="30px" />
         <Table fontSize="md">
           <thead>{ths}</thead>
-          <tbody>{rows}</tbody>
+          <tbody>
+            {rows}
+            <tr>
+              <td colSpan={5} className="text-end me-5"></td>
+              <td>
+                <strong>${cartTotal}</strong>
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
         </Table>
         <Space h="30px" />
         <Group position="apart">
