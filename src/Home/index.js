@@ -1,13 +1,12 @@
 import { Container, Title, Space, Divider } from "@mantine/core";
 import Products from "../Products";
+import Header from "../Header";
 
 export default function Home() {
   return (
     <Container>
       <Space h="50px" />
-      <Title align="center">Welcome to My Store</Title>
-      <Space h="20px" />
-      <Divider />
+      <Header />
       <Space h="30px" />
       <Products />
       <Space h="30px" />

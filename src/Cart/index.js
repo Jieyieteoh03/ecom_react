@@ -1,0 +1,169 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCartItems, removeItemFromCart } from "../api/cart";
+import {
+  Table,
+  Container,
+  Button,
+  Image,
+  Title,
+  Space,
+  Checkbox,
+  Group,
+} from "@mantine/core";
+import Header from "../Header";
+import { useState } from "react";
+import { notifications } from "@mantine/notifications";
+
+export default function Cart() {
+  //let checkedList = []
+  const [checkedList, setCheckedList] = useState([]);
+  const queryClient = useQueryClient();
+  const [checkAll, setCheckAll] = useState(false);
+  const { data: cart = [] } = useQuery({
+    queryKey: ["cart"],
+    queryFn: getCartItems,
+  });
+
+  const ths = (
+    <tr>
+      <th>
+        <Checkbox
+          type="checkbox"
+          checked={checkAll}
+          disabled={cart && cart.length > 0 ? false : true}
+          onChange={(event) => {
+            checkBoxAll(event);
+          }}
+        />
+      </th>
+      <th>Product</th>
+      <th></th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Total</th>
+      <th>Action</th>
+    </tr>
+  );
+
+  const rows = cart.map((carts) => (
+    <tr key={carts.name}>
+      <td>
+        {" "}
+        <Checkbox
+          checked={
+            checkedList && checkedList.includes(carts._id) ? true : false
+          }
+          type="checkbox"
+          onChange={(event) => {
+            checkboxOne(event, carts._id);
+          }}
+        />
+      </td>
+      <td>
+        {carts.image && carts.image !== "" ? (
+          <Image src={"http://localhost:5000/" + carts.image} width="70px" />
+        ) : (
+          <Image src={"./images/unavailable-image.jpg"} width="70px" />
+        )}
+      </td>
+      <td> {carts.title}</td>
+      <td>{carts.price}</td>
+      <td>{carts.quantity}</td>
+      <td>{carts.price * carts.quantity}</td>
+      <td>
+        <Button
+          color="red"
+          variant="outline"
+          onClick={() => {
+            deleteMutation.mutate(carts._id);
+          }}
+        >
+          Remove
+        </Button>
+      </td>
+    </tr>
+  ));
+
+  const checkBoxAll = (event) => {
+    if (event.target.checked) {
+      const newCheckedList = [];
+      cart.forEach((cart) => {
+        newCheckedList.push(cart._id);
+      });
+      setCheckedList(newCheckedList);
+      setCheckAll(true);
+    } else {
+      setCheckedList([]);
+      setCheckAll(false);
+    }
+  };
+  const checkboxOne = (event, id) => {
+    if (event.target.checked) {
+      const newCheckedList = [...checkedList];
+      newCheckedList.push(id);
+      setCheckedList(newCheckedList);
+    } else {
+      const newCheckedList = checkedList.filter((cart) => cart !== id);
+      setCheckedList(newCheckedList);
+    }
+  };
+
+  const deleteMutation = useMutation({
+    mutationFn: removeItemFromCart,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
+      notifications.show({
+        title: "Cart deleted",
+        color: "red",
+      });
+    },
+  });
+
+  const deleteCheckedItems = () => {
+    const newCart = cart.filter((item) => !checkedList.includes(item._id));
+
+    queryClient.setQueryData(["cart"], newCart);
+
+    setCheckedList([]);
+    localStorage.setItem("cart", JSON.stringify(newCart));
+
+    setCheckAll(false);
+    setCheckedList([]);
+  };
+
+  return (
+    <>
+      <Container>
+        <Space h="30px" />
+        <Header />
+        <Space h="30px" />
+        <Title align="center">Cart</Title>
+        <Space h="30px" />
+        <Table fontSize="md">
+          <thead>{ths}</thead>
+          <tbody>{rows}</tbody>
+        </Table>
+        <Space h="30px" />
+        <Group position="apart">
+          {checkAll || checkedList.length > 0 ? (
+            <Button
+              onClick={(event) => {
+                event.preventDefault();
+                deleteCheckedItems();
+              }}
+              color="red"
+            >
+              Delete Selected
+            </Button>
+          ) : (
+            <Button disabled>Delete Selected</Button>
+          )}
+
+          <Button>Checkout</Button>
+        </Group>
+      </Container>
+    </>
+  );
+}

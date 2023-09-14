@@ -4,6 +4,7 @@ import Home from "./Home";
 import Products from "./Products";
 import ProductsAdd from "./ProductsAdd";
 import ProductsEdit from "./ProductsEdit";
+import Cart from "./Cart";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/Products" element={<Products />} />
         <Route path="/products_add" element={<ProductsAdd />} />
         <Route path="/products_edit/:id" element={<ProductsEdit />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
     </Router>
   );
