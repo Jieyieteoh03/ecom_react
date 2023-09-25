@@ -85,7 +85,7 @@ export default function Orders() {
         <Table>
           <thead>
             <tr>
-              <th>Order ID</th>
+              <th>Customer</th>
               <th colSpan={2}>Products</th>
               <th>Total Amount</th>
               <th>Status</th>
@@ -98,7 +98,7 @@ export default function Orders() {
               ? orders.map((o) => {
                   return (
                     <tr key={o._id}>
-                      <td>{o._id}</td>
+                      <td>{o.customerEmail}</td>
                       <td>
                         {o.products.map((product, index) => (
                           <div key={index}>
