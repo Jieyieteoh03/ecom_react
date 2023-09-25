@@ -241,6 +241,7 @@ function Products() {
                       >
                         Edit
                       </Button>
+
                       <Button
                         color="red"
                         size="xs"

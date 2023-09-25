@@ -17,6 +17,7 @@ import {
 import Header from "../Header";
 import { useState, useMemo } from "react";
 import { notifications } from "@mantine/notifications";
+import { Link } from "react-router-dom";
 
 export default function Cart() {
   const [checkedList, setCheckedList] = useState([]);
@@ -172,7 +173,7 @@ export default function Cart() {
     <>
       <Container>
         <Space h="30px" />
-        <Header />
+        <Header title="Cart" page="cart" />
         <Space h="30px" />
         <Title align="center">Cart</Title>
         <Space h="30px" />
@@ -205,7 +206,13 @@ export default function Cart() {
             <Button disabled>Delete Selected</Button>
           )}
 
-          <Button>Checkout</Button>
+          <Button
+            component={Link}
+            to="/checkout"
+            disabled={cart.length > 0 ? false : true}
+          >
+            Checkout
+          </Button>
         </Group>
       </Container>
     </>

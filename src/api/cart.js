@@ -4,6 +4,11 @@ export const getCartItems = () => {
   return cart ? cart : [];
 };
 
+//get cart from items
+export const clearCartItems = () => {
+  localStorage.removeItem("cart");
+};
+
 // add product to cart
 export const addToCart = (product) => {
   // get all the items from the current cart
