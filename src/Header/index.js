@@ -29,6 +29,20 @@ export default function Header({ title, page = "" }) {
         >
           My Orders
         </Button>
+        <Button
+          component={Link}
+          to="/login"
+          variant={page === "login" ? "filled" : "light"}
+        >
+          Login
+        </Button>
+        <Button
+          component={Link}
+          to="/Signup"
+          variant={page === "signup" ? "filled" : "light"}
+        >
+          Signup
+        </Button>
       </Group>
       <Space h="20px" />
       <Divider />
