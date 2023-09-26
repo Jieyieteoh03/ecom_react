@@ -28,14 +28,6 @@ export default function Orders() {
   const queryClient = useQueryClient();
   const [status, setStatus] = useState("");
 
-  const { isLoading } = useQuery({
-    queryKey: ["orders", orders._id],
-    queryFn: () => getOrder(orders._id),
-    onSuccess: (data) => {
-      setStatus(data.status);
-    },
-  });
-
   const updateMutation = useMutation({
     mutationFn: updateStatus,
     onSuccess: () => {
