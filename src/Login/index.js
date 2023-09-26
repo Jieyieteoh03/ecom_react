@@ -11,9 +11,10 @@ import {
   Grid,
   Text,
   Badge,
+  Card,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
-import { Card } from "react-bootstrap";
+
 import Header from "../Header";
 
 export default function Login() {
@@ -25,11 +26,11 @@ export default function Login() {
         <TextInput label="Email" placeholder="Enter email" />
         <Space h="30px" />
         <TextInput label="Password" placeholder="Enter password" />
+        <Space h="30px" />
+        <Group position="center">
+          <Button fullWidth>Login</Button>
+        </Group>
       </Card>
-      <Space h="50px" />
-      <Group position="center">
-        <Button fullWidth>Login</Button>
-      </Group>
     </Container>
   );
 }

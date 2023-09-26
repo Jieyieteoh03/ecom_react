@@ -11,8 +11,9 @@ import {
   Grid,
   Text,
   Badge,
+  Card,
 } from "@mantine/core";
-import { Card } from "react-bootstrap";
+
 import { Link } from "react-router-dom";
 import Header from "../Header";
 
@@ -21,7 +22,7 @@ export default function Signup() {
     <Container>
       <Header title="Signup" page="signup" />
       <Space h="50px" />
-      <Card withBorder shadow="md" p="20px">
+      <Card shadow="md" radius="md" withBorder>
         <TextInput label="Name" placeholder="Enter name"></TextInput>
         <Space h="30px" />
         <TextInput label="Email" placeholder="Enter email" />
@@ -32,11 +33,11 @@ export default function Signup() {
           label="Confirm password"
           placeholder="Enter confirmed password"
         />
+        <Space h="30px" />
+        <Group position="center">
+          <Button fullWidth>Signup</Button>
+        </Group>
       </Card>
-      <Space h="50px" />
-      <Group position="center">
-        <Button fullWidth>Signup</Button>
-      </Group>
     </Container>
   );
 }
