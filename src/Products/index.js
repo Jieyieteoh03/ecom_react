@@ -25,6 +25,7 @@ import { useCookies } from "react-cookie";
 
 function Products() {
   const [cookies] = useCookies(["currentUser"]);
+  const { currentUser } = cookies;
   const queryClient = useQueryClient();
   const [currentProducts, setCurrentProducts] = useState([]);
   const [category, setCategory] = useState("");
@@ -261,7 +262,10 @@ function Products() {
                             size="xs"
                             radius="50px"
                             onClick={() => {
-                              deleteMutation.mutate(product._id);
+                              deleteMutation.mutate({
+                                id: product._id,
+                                token: currentUser ? currentUser.token : "",
+                              });
                             }}
                           >
                             Delete

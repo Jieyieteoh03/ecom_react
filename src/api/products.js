@@ -11,7 +11,7 @@ export const getProduct = async (id) => {
   return response.data;
 };
 
-export const addProducts = async (data, token = "") => {
+export const addProducts = async ({ data, token = "" }) => {
   const response = await axios({
     method: "POST",
     url: API_URL + "/products",
@@ -51,7 +51,7 @@ export const updateProduct = async ({ id, data, token = "" }) => {
   return response.data;
 };
 
-export const deleteProduct = async (id = "", token = "") => {
+export const deleteProduct = async ({ id = "", token = "" }) => {
   const response = await axios({
     method: "DELETE",
     url: API_URL + "/products/" + id,

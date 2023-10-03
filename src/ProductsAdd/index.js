@@ -30,6 +30,7 @@ import { useCookies } from "react-cookie";
 function ProductsAdd() {
   const navigate = useNavigate();
   const [cookies] = useCookies(["currentUser"]);
+  const { currentUser } = cookies;
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [price, setPrice] = useState("");
@@ -65,14 +66,16 @@ function ProductsAdd() {
 
   const handleAddNewProduct = async (event) => {
     event.preventDefault();
-    createMutation.mutate(
-      JSON.stringify({
+    createMutation.mutate({
+      data: JSON.stringify({
         title: title,
         desc: desc,
         price: price,
         category: category,
-      })
-    );
+        image: image,
+      }),
+      token: currentUser ? currentUser.token : "",
+    });
   };
 
   const uploadMutation = useMutation({

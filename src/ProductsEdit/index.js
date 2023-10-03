@@ -12,11 +12,11 @@ import {
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { notifications } from "@mantine/notifications";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getProduct, updateProduct, uploadProductImage } from "../api/products";
-
+import { useCookies } from "react-cookie";
 // const getProducts = async (id) => {
 //   const response = await axios.get("http://localhost:5000/products/" + id);
 //   return response.data;
@@ -33,6 +33,8 @@ import { getProduct, updateProduct, uploadProductImage } from "../api/products";
 // };
 
 function ProductsEdit() {
+  const [cookies] = useCookies(["currentUser"]);
+  const { currentUser } = cookies;
   const { id } = useParams();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
@@ -52,6 +54,14 @@ function ProductsEdit() {
       setImage(data.image);
     },
   });
+
+  const isAdmin = useMemo(() => {
+    return cookies &&
+      cookies.currentUser &&
+      cookies.currentUser.role === "admin"
+      ? true
+      : false;
+  }, [cookies]);
 
   const updateMutation = useMutation({
     mutationFn: updateProduct,
@@ -82,6 +92,7 @@ function ProductsEdit() {
         category: category,
         image: image,
       }),
+      token: currentUser ? currentUser.token : "",
     });
   };
 
@@ -165,9 +176,11 @@ function ProductsEdit() {
           onChange={(event) => setCategory(event.target.value)}
         />
         <Space h="20px" />
-        <Button fullWidth onClick={handleUpdateProduct}>
-          Update
-        </Button>
+        {isAdmin && (
+          <Button fullWidth onClick={handleUpdateProduct}>
+            Update
+          </Button>
+        )}
       </Card>
       <Space h="20px" />
       <Group position="center">
