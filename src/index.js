@@ -7,6 +7,7 @@ import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { CookiesProvider } from "react-cookie";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -14,14 +15,16 @@ const queryClient = new QueryClient();
 
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <MantineProvider withNormalizeCSS withGlobalStyles>
-        <ModalsProvider>
-          <Notifications />
-          <App />
-        </ModalsProvider>
-      </MantineProvider>
-    </QueryClientProvider>
+    <CookiesProvider defaultSetOptions={{ path: "/" }}>
+      <QueryClientProvider client={queryClient}>
+        <MantineProvider withNormalizeCSS withGlobalStyles>
+          <ModalsProvider>
+            <Notifications />
+            <App />
+          </ModalsProvider>
+        </MantineProvider>
+      </QueryClientProvider>
+    </CookiesProvider>
   </React.StrictMode>
 );
 

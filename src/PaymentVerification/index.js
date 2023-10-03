@@ -49,7 +49,7 @@ export default function PaymentVerification() {
         // if it's paid, show paid message
         notifications.show({
           title: "Payment verified",
-          color: "red",
+          color: "green",
         });
       } else if (order.status === "Failed") {
         // if payment failed, show failed message

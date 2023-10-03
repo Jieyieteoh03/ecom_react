@@ -6,6 +6,7 @@ import { notifications } from "@mantine/notifications";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { fetchProducts, deleteProduct } from "../api/products";
 import { addToCart, getCartItems } from "../api/cart";
+import { useCookies } from "react-cookie";
 
 // const fetchProducts = async (category = "") => {
 //   const response = await axios.get(
@@ -23,6 +24,7 @@ import { addToCart, getCartItems } from "../api/cart";
 // };
 
 function Products() {
+  const [cookies] = useCookies(["currentUser"]);
   const queryClient = useQueryClient();
   const [currentProducts, setCurrentProducts] = useState([]);
   const [category, setCategory] = useState("");
@@ -39,6 +41,14 @@ function Products() {
     queryKey: ["cart"],
     queryFn: getCartItems,
   });
+
+  const isAdmin = useMemo(() => {
+    return cookies &&
+      cookies.currentUser &&
+      cookies.currentUser.role === "admin"
+      ? true
+      : false;
+  }, [cookies]);
 
   useEffect(() => {
     /* 
@@ -161,9 +171,11 @@ function Products() {
         <Title order={3} align="center">
           Products
         </Title>
-        <Button component={Link} to="/products_add" color="green">
-          Add new
-        </Button>
+        {isAdmin && (
+          <Button component={Link} to="/products_add" color="green">
+            Add new
+          </Button>
+        )}
       </Group>
       <Space h="20px" />
       <Group>
@@ -230,29 +242,33 @@ function Products() {
                     >
                       Add to cart
                     </Button>
-                    <Space h="20px" />
-                    <Group position="apart">
-                      <Button
-                        component={Link}
-                        to={"/products_edit/" + product._id}
-                        color="blue"
-                        size="xs"
-                        radius="50px"
-                      >
-                        Edit
-                      </Button>
+                    {isAdmin && (
+                      <>
+                        <Space h="20px" />
+                        <Group position="apart">
+                          <Button
+                            component={Link}
+                            to={"/products_edit/" + product._id}
+                            color="blue"
+                            size="xs"
+                            radius="50px"
+                          >
+                            Edit
+                          </Button>
 
-                      <Button
-                        color="red"
-                        size="xs"
-                        radius="50px"
-                        onClick={() => {
-                          deleteMutation.mutate(product._id);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </Group>
+                          <Button
+                            color="red"
+                            size="xs"
+                            radius="50px"
+                            onClick={() => {
+                              deleteMutation.mutate(product._id);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </Group>
+                      </>
+                    )}
                   </Card>
                 </Grid.Col>
               );

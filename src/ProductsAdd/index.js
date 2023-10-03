@@ -12,9 +12,10 @@ import {
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { Link, useNavigate } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { addProducts, uploadProductImage } from "../api/products";
+import { useCookies } from "react-cookie";
 
 // const addProducts = async (data) => {
 //   const response = await axios({
@@ -28,12 +29,21 @@ import { addProducts, uploadProductImage } from "../api/products";
 
 function ProductsAdd() {
   const navigate = useNavigate();
+  const [cookies] = useCookies(["currentUser"]);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState("");
+
+  const isAdmin = useMemo(() => {
+    return cookies &&
+      cookies.currentUser &&
+      cookies.currentUser.role === "admin"
+      ? true
+      : false;
+  }, [cookies]);
 
   const createMutation = useMutation({
     mutationFn: addProducts,
@@ -157,9 +167,11 @@ function ProductsAdd() {
           onChange={(event) => setCategory(event.target.value)}
         />
         <Space h="20px" />
-        <Button fullWidth onClick={handleAddNewProduct}>
-          Add New Product
-        </Button>
+        {isAdmin && (
+          <Button fullWidth onClick={handleAddNewProduct}>
+            Add New Product
+          </Button>
+        )}
       </Card>
       <Space h="20px" />
       <Group position="center">
